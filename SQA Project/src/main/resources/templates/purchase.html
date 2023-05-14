@@ -1,0 +1,180 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>California Ultra-Speed Rail - Input Passenger Information</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" type="text/css"
+	href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+	<nav class="navbar navbar-inverse">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse"
+					data-target="#myNavbar">
+					<span class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" th:href="@{/tickets}">CUSR</a>
+			</div>
+			<div class="collapse navbar-collapse" id="myNavbar">
+				<ul class="nav navbar-nav">
+					<li class="active"><a th:href="@{/tickets}">Dashboard</a></li>
+					<li><a th:href="@{/search}">Search</a></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li><a th:href="@{/signout}"><span
+							class="glyphicon glyphicon-user"></span> Sign out</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<form action="#" th:action="@{/purchaseConfirm}" th:object="${booking}"
+		method="post">
+		<div class="container">
+			<h3>Selected Ticket Information:</h3>
+			<br></br>
+			<table class="table table-striped">
+				<tr>
+					<th>Departure Date</th>
+					<td><input type="text" th:name="|departureDate|"
+						th:value="${departureDate}" readonly="readonly"
+						style="border: none" /></td>
+				</tr>
+			</table>
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Train</th>
+						<th>Departure Station</th>
+						<th>Departure Time</th>
+						<th>Arrival Station</th>
+						<th>Arrival Time</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="dt, stat : ${departureTrip}">
+						<td><input type="text"
+							th:name="|departureTrip[${stat.index}].bound|"
+							th:value="${dt.getBound()}" readonly="readonly"
+							style="border: none" /></td>
+						<td><input type="text"
+							th:name="|departureTrip[${stat.index}].departureStation|"
+							th:value="${dt.getDepartureStation()}" readonly="readonly"
+							style="border: none" /></td>
+						<td><input type="text"
+							th:name="|departureTrip[${stat.index}].departureTime|"
+							th:value="${dt.getDepartureTime()}" readonly="readonly"
+							style="border: none" /></td>
+						<td><input type="text"
+							th:name="|departureTrip[${stat.index}].arrivalStation|"
+							th:value="${dt.getArrivalStation()}" readonly="readonly"
+							style="border: none" /></td>
+						<td><input type="text"
+							th:name="|departureTrip[${stat.index}].arrivalTime|"
+							th:value="${dt.getArrivalTime()}" readonly="readonly"
+							style="border: none" /></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<br></br>
+
+		<div th:if="${round} == 'Y'" class="container">
+			<table class="table table-striped">
+				<tr>
+					<th>Return Date</th>
+					<td><input type="text" th:name="|returnDate|"
+						th:value="${returnDate}" readonly="readonly" style="border: none" /></td>
+				</tr>
+			</table>
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Train</th>
+						<th>Departure Station</th>
+						<th>Departure Time</th>
+						<th>Arrival Station</th>
+						<th>Arrival Time</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="rt, stat : ${returnTrip}">
+						<td><input type="text"
+							th:name="|returnTrip[${stat.index}].bound|"
+							th:value="${rt.getBound()}" readonly="readonly"
+							style="border: none" /></td>
+						<td><input type="text"
+							th:name="|returnTrip[${stat.index}].departureStation|"
+							th:value="${rt.getDepartureStation()}" readonly="readonly"
+							style="border: none" /></td>
+						<td><input type="text"
+							th:name="|returnTrip[${stat.index}].departureTime|"
+							th:value="${rt.getDepartureTime()}" readonly="readonly"
+							style="border: none" /></td>
+						<td><input type="text"
+							th:name="|returnTrip[${stat.index}].arrivalStation|"
+							th:value="${rt.getArrivalStation()}" readonly="readonly"
+							style="border: none" /></td>
+						<td><input type="text"
+							th:name="|returnTrip[${stat.index}].arrivalTime|"
+							th:value="${rt.getArrivalTime()}" readonly="readonly"
+							style="border: none" /></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<br></br>
+
+		<div class="container">
+			<table class="table table-striped">
+				<tr>
+					<th>Ticket Price</th>
+					<td>$<input type="text" th:name="|price|" th:value="${price}"
+						readonly="readonly" style="border: none" /></td>
+				</tr>
+				<tr>
+					<th>Transaction Fee</th>
+					<td>$1.0</td>
+				</tr>
+				<tr>
+					<th>Total Price</th>
+					<td th:text="'$' + ${totalPrice}" />
+				</tr>
+			</table>
+		</div>
+		<br></br>
+
+		<div class="container">
+			<table class="table table-striped">
+				<tr>
+					<th>Number of Seats</th>
+					<td><input type="text" th:name="|numOfSeats|"
+						th:value="${numOfSeats}" readonly="readonly" style="border: none" /></td>
+				</tr>
+			</table>
+			<h3>Please Input Passenger Name:</h3>
+			<br></br>
+		</div>
+
+		<div th:each="p, stat : ${passenger}" class="container">
+			<label>Passenger Name: </label> <input type="text"
+				th:name="|passenger[${stat.index}]|" th:value="${p}" />
+		</div>
+		<br></br>
+
+		<div class="container">
+			<button type="submit" value="submit" class="btn btn-success">Book</button>
+		</div>
+		<br></br>
+	</form>
+</body>
+</html>

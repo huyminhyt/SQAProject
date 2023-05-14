@@ -1,0 +1,116 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>California Ultra-Speed Rail - Your Tickets</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<link rel="stylesheet" type="text/css"
+	href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  	<link rel="stylesheet" href="/css/main.css" />
+
+
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" th:href="@{/tickets}">CUSR</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a th:href="@{/tickets}">Dashboard</a></li>
+        <li><a th:href="@{/search}">Search</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a th:href="@{/signout}"><span class="glyphicon glyphicon-user"></span> Sign out</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+<div class="container">
+	<h3>Welcome to California Ultra-Speed Railway Ticket Booking System</h3>
+	<br></br>
+	<h3>List of Your Tickets</h3>
+	<table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Origin</th>
+        <th>Destination</th>
+        <th>Passengers</th>
+        <th>Ticket Details</th>
+        <th>Cancel Ticket</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="ticket : ${ticketList}">
+        <td th:text="${ticket.departDate}"></td>
+        <td th:text="${ticket.departSegment1DepartTime}"></td>
+        <td th:text="${ticket.departStation}"></td>
+        <td th:text="${ticket.arrivalStation}"></td>
+        <td th:text="${ticket.passenger}"></td>
+        <script type="text/javascript" th:inline="javascript">
+        		var varname = 'ticketjson' + /*[[${ticket.ticketId}]]*/;
+        		window[varname] = {
+        			Train: /*[[${ticket.departTrains[0].bound}]]*/,
+        			Date: /*[[${ticket.departDate}]]*/,
+        			DepartTime: /*[[${ticket.departSegment1DepartTime}]]*/,
+        			DepartStation: /*[[${ticket.departStation.name()}]]*/,
+        			ArrivalStation: /*[[${ticket.arrivalStation.name()}]]*/,
+        			Price: '$'+/*[[${ticket.price}]]*/
+        		};
+        </script>
+        <td><a href="#" th:onclick="'javascript:openTicketModal(window[\'ticketjson' + ${ticket.ticketId} + '\']);'">Ticket Details</a></td>
+        <td><a th:href="@{'/ticketCancel?id=' + ${ticket.ticketId}}">Cancel Ticket</a></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div id="ticketModal" class="modal fade" role="dialog" th:fragment="modalContents">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Ticket Details</h4>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  function openTicketModal(ticket) {
+    var $tbody = $("<tbody></tbody>");
+    for(var key in ticket) {
+    		var $line = $("<tr></tr>");
+    		$line.append( $("<td></td>").html(key) );
+    		$line.append( $("<td></td>").html(ticket[key]) );
+    		$tbody.append($line);
+    }
+    var $table = $("<table></table>");
+    $table.addClass("table table-striped");
+    $table.append($tbody);
+    
+    $(".modal-body").html($table);
+    $("#ticketModal").modal("show");
+  }
+</script>
+</body>
+</html>

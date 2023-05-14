@@ -1,0 +1,160 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>VIETNAM Ultra-Speed Rail - User Login</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<!--<link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />-->
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="/css/main.css" />
+
+<!-- for firebase -->
+<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase-messaging.js"></script>
+
+
+</head>
+<body>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" th:href="@{/}">CUSR</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a th:href="@{/}">Home</a></li>
+       	<li><a th:href="@{/admin}">Admin</a></li>
+       	<li><a th:href="@{/systemreports}">System Reports</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a th:href="@{/}"><span class="glyphicon glyphicon-user"></span> Sign in</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+<div class="container">
+	<h3>Welcome to California Ultra-Speed Railway Ticket Booking System</h3>
+	<br></br>
+	<div>
+		<img id="google-login" class="login-logo" style="cursor: pointer" src="/img/google-login.png" />
+		<img id="fb-login" class="login-logo" style="cursor: pointer" src="/img/fb-login.png" />
+	</div>
+	
+	<div class="row">
+		<div class="col-md-5">
+			<h3>Login with email</h3>
+			<form class="form">
+				<div class="form-group">
+					<label for="email">Email</label>
+					<input type="text" id="login-email" class="form-control" placeholder="Enter Email" name="email" />
+				</div>
+				
+				<div class="form-group">
+					<label for="pwd">Password</label>
+					<input type="password" id="login-pwd" class="form-control" placeholder="Enter Password" name="pwd" />
+				</div>
+				
+				<div id="login" class="btn btn-default">Login</div>
+			</form>
+		</div>
+
+		<div class="col-md-1 middle-border"></div>
+        <div class="col-md-1"></div>
+
+        <div class="col-md-5">
+        	<h3>Create a CUSR account</h3>
+			<form class="form">
+				<div class="form-group">
+					<label for="email">Email</label>
+					<input type="text" id="reg-email" class="form-control" placeholder="Enter Email" name="email" />
+				</div>
+				
+				<div class="form-group">
+					<label for="pwd">Password</label>
+					<input type="password" id="reg-pwd" class="form-control" placeholder="Enter Password" name="pwd" />
+				</div>
+				
+				<div id="register" class="btn btn-default">Register</div>
+			</form>
+        </div>
+
+	</div>
+</div>
+
+<script>
+	var config = {
+	    apiKey: "***",
+	    authDomain: "cmpe275-cusr.firebaseapp.com",
+	    databaseURL: "https://cmpe275-cusr.firebaseio.com"
+	};
+	firebase.initializeApp(config);
+
+	var fb_provider = new firebase.auth.FacebookAuthProvider();
+
+	var google_provider = new firebase.auth.GoogleAuthProvider();
+
+	$("#fb-login").click(function(){
+		firebase.auth().signInWithPopup(fb_provider).then(function(result){
+			var token = result.credential.accessToken;
+			var user = result.user;
+			user.getIdToken().then(function(data) {
+		      window.location = "/signin?firebaseToken="+data;
+		    });
+		}).catch(function(error) {
+			console.log(error.code);
+		});
+	});
+
+	$("#google-login").click(function(){
+		firebase.auth().signInWithPopup(google_provider).then(function(result){
+			var token = result.credential.accessToken;
+			var user = result.user;
+			user.getIdToken().then(function(data) {
+		      window.location = "/signin?firebaseToken="+data;
+		    });
+		}).catch(function(error) {
+			console.log(error.code);
+		});
+	});
+	
+	$("#login").click(function(){
+		var email = $("#login-email").val();
+		var pwd = $("#login-pwd").val();
+		firebase.auth().signInWithEmailAndPassword(email, pwd).then(function(result){
+			result.getIdToken().then(function(data) {
+		      window.location = "/signin?firebaseToken="+data;
+		    });
+		}).catch(function(error) {
+			console.log(error.code);
+			alert(error.message);
+		});
+	});
+
+	$("#register").click(function(){
+		var email = $("#reg-email").val();
+		var pwd = $("#reg-pwd").val();
+		firebase.auth().createUserWithEmailAndPassword(email, pwd).then(function(result){
+			result.getIdToken().then(function(data) {
+				window.location = "/signin?firebaseToken="+data;
+			});
+		}).catch(function(error) {
+			console.log(error.code);
+			alert(error.message);
+		});
+	});
+</script>
+
+</body>
+</html>
